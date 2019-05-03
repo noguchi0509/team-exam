@@ -50,6 +50,21 @@ class TeamsController < ApplicationController
   def dashboard
     @team = current_user.keep_team_id ? Team.find(current_user.keep_team_id) : current_user.teams.first
   end
+  
+  def transfer_authority
+    team = Team.find(params[:team_id])
+    transfered_user = User.find(params[:transfered_user_id])
+    
+    if transfered_user == team.owner
+      untransferelable_message ="既にこのチームのリーダーです"
+      redirect_to team_url(params[:team_id]), notice: untransferelable_message
+    else
+      team.update!(owner:transfered_user)
+      TransferAuthorityMailer.transfer_done_mail(transfered_user.email,team.name).deliver
+      transfered_message = "リーダーを変更しました"
+      redirect_to team_url(params[:team_id]), notice: transfered_message
+    end
+  end
 
   private
 
@@ -60,4 +75,5 @@ class TeamsController < ApplicationController
   def team_params
     params.fetch(:team, {}).permit %i[name icon icon_cache owner_id keep_team_id]
   end
+  
 end

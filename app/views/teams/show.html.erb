@@ -42,6 +42,7 @@
                       <td><%= image_tag 'default.jpg', size: '40x40' %></td>
                       <td><%= assign.user.email %></td>
                       <% if @team.owner==current_user %><td><%= link_to '削除', team_assign_path(@team, assign), method: :delete, class: 'btn btn-sm btn-danger' %></td><% end %>
+                      <% if @team.owner==current_user %><td><%= link_to '権限移譲', team_transfer_authority_path(@team.id, params: { team_id: @team.id,transfered_user_id: assign.user.id}),  method: :put, class: 'btn btn-sm' %></td><% end %>
                     </tr>
                   <% end %>
                 </tbody>
